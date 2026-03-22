@@ -20,10 +20,18 @@ ENV/
 
 # ── ML model artefacts (large binary files) ───────────────────────────────
 models/*.pkl
+models/finetuned_distilbert/
+models/finetuned_roberta/
 
-# ── HuggingFace cache ──────────────────────────────────────────────────────
+# ── HuggingFace cache (hundreds of MB) ────────────────────────────────────
 .cache/
 ~/.cache/huggingface/
+huggingface/
+*.bin
+*.safetensors
+*.h5
+*.pt
+*.onnx
 
 # ── OS junk ────────────────────────────────────────────────────────────────
 .DS_Store

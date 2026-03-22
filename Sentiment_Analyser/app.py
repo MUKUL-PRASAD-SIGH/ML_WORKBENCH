@@ -239,8 +239,8 @@ with st.sidebar:
     st.markdown("#### Model Status")
     st.markdown(f"{status_dot(st.session_state.nltk_ready)}  **NLTK** — Logistic Regression")
     st.markdown(f"{status_dot(st.session_state.spacy_ready)}  **spaCy** — Logistic Regression")
-    st.markdown(f"{status_dot(st.session_state.trans_ready)}  **DistilBERT** — Pre-trained")
-    st.markdown(f"{status_dot(st.session_state.finetuned_ready)}  **Fine-tuned BERT** — Custom")
+    st.markdown(f"{status_dot(st.session_state.trans_ready)}  **RoBERTa** — Pre-trained")
+    st.markdown(f"{status_dot(st.session_state.finetuned_ready)}  **Fine-tuned RoBERTa** — Custom")
     st.divider()
 
     st.markdown("#### 🔑 Legend")
@@ -265,7 +265,7 @@ st.markdown("""
     NLP Model Comparison
   </h1>
   <p style='color:#64748b;font-size:1.05rem;max-width:600px;margin:auto'>
-    See <b style='color:#a5b4fc'>every step</b> of how NLTK, spaCy &amp; DistilBERT process
+    See <b style='color:#a5b4fc'>every step</b> of how NLTK, spaCy &amp; RoBERTa process
     your text — from raw input to final prediction.
   </p>
 </div>
@@ -303,11 +303,12 @@ with tab_analyse:
     with col_ex:
         st.markdown("<div style='height:1.9rem'></div>", unsafe_allow_html=True)
         st.markdown("<div style='font-size:.78rem;color:#6366f1;font-weight:600;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.5rem'>💡 Examples</div>", unsafe_allow_html=True)
+        def set_example(t):
+            st.session_state.analyse_input = t
+
         for ex in EXAMPLES:
             short = (ex[:42] + "…") if len(ex) > 42 else ex
-            if st.button(short, key=f"ex_{ex[:8]}"):
-                st.session_state.analyse_input = ex
-                st.rerun()
+            st.button(short, key=f"ex_{ex[:8]}", on_click=set_example, args=(ex,))
 
     run_btn = st.button("🚀  Analyse — Show Me Every Step", use_container_width=True)
 
@@ -328,9 +329,9 @@ with tab_analyse:
             if pl._spacy_ready:
                 results["spaCy"]            = pl.predict_spacy(user_text.strip())
             if pl._trans_ready:
-                results["Transformer"]      = pl.predict_transformer(user_text.strip())
+                results["Pre-trained RoBERTa"] = pl.predict_transformer(user_text.strip())
             if pl._finetuned_ready:
-                results["Fine-tuned BERT"]  = pl.predict_finetuned(user_text.strip())
+                results["Fine-tuned RoBERTa"]  = pl.predict_finetuned(user_text.strip())
 
         st.session_state.last_result = results
 
@@ -341,8 +342,8 @@ with tab_analyse:
         META = {
             "NLTK":           ("#60a5fa", "card-blue",   "🔵"),
             "spaCy":          ("#34d399", "card-green",  "🟢"),
-            "Transformer":    ("#f472b6", "card-pink",   "🔴"),
-            "Fine-tuned BERT":("#a855f7", "card-yellow", "🟣"),
+            "Pre-trained RoBERTa": ("#f472b6", "card-pink",   "🔴"),
+            "Fine-tuned RoBERTa":  ("#a855f7", "card-yellow", "🟣"),
         }
         cols = st.columns(len(results))
         for idx, (name, res) in enumerate(results.items()):
@@ -364,7 +365,7 @@ with tab_analyse:
         # ── probability gauges ─────────────────────────────────────────
         st.markdown("### 🎯 Probability Gauges")
         gcols = st.columns(len(results))
-        gauge_colors = {"NLTK": "#60a5fa", "spaCy": "#34d399", "Transformer": "#f472b6"}
+        gauge_colors = {"NLTK": "#60a5fa", "spaCy": "#34d399", "Pre-trained RoBERTa": "#f472b6", "Fine-tuned RoBERTa": "#a855f7"}
         for idx, (name, res) in enumerate(results.items()):
             with gcols[idx]:
                 st.plotly_chart(prob_gauge(res["proba_pos"], name, gauge_colors[name]),
@@ -740,17 +741,15 @@ with tab_train:
     st.divider()
 
     # ─── BERT — no training, but load ─────────────────────────────────
-    st.markdown("#### 🔴 DistilBERT — Pre-trained (No Training Needed)")
+    st.markdown("#### 🔴 RoBERTa — Pre-trained (No Training Needed)")
     st.markdown("""
     <div class='card card-pink'>
       <p style='color:#94a3b8;font-size:.88rem;margin:0'>
-        DistilBERT is <b>already fine-tuned on SST-2 by HuggingFace</b>. It downloads automatically (~270 MB) on first use.
-        Unlike NLTK/spaCy, re-training BERT requires GPUs and hours of compute — so we use the
-        pre-trained checkpoint directly.
+        RoBERTa is a massive deep learning model. The <b>pre-trained baseline</b> by HuggingFace (cardiffnlp/twitter-roberta-base-sentiment) already understands sentiment nuance right out of the box (~499 MB). It requires no training to use, providing a strong baseline for comparison before you fine-tune a model globally below.
       </p>
     </div>""", unsafe_allow_html=True)
 
-    load_bert_btn = st.button("⬇️ Load DistilBERT (downloads ~270 MB if not cached)",
+    load_bert_btn = st.button("⬇️ Load RoBERTa (downloads ~499 MB if not cached)",
                               use_container_width=True)
     if load_bert_btn:
         with st.spinner("Loading DistilBERT …"):
@@ -762,10 +761,10 @@ with tab_train:
         else:
             st.error("❌ Failed to load. Check your internet connection.")
 
-    st.markdown("#### 🟣 DistilBERT — Fine-tune on your data")
+    st.markdown("#### 🟣 RoBERTa — Fine-tune on your data")
     st.write("Train the transformer head specifically on your dataset. This takes time (~30+ sec per 100 samples on CPU).")
     ft_epochs = st.slider("Epochs", 1, 3, 1)
-    if st.button("🚀 Fine-tune DistilBERT", type="primary", use_container_width=True):
+    if st.button("🚀 Fine-tune RoBERTa", type="primary", use_container_width=True):
         if not dataset_ready:
             st.error("⚠️ Please load a dataset first (Step 1).")
         else:
@@ -773,12 +772,14 @@ with tab_train:
             ft_step_txt = st.empty()
             
             def ft_cb(msg, pct, extra):
+                import uuid
                 ft_step_txt.markdown(f"**{msg}**")
                 if "losses" in extra and extra["losses"]:
                     # plot live loss curve
                     df_l = pd.DataFrame(extra["losses"])
                     fig = px.line(df_l, x="step", y="loss", title="Training Loss (Live)", template="plotly_dark", height=250)
-                    loss_chart.plotly_chart(fig, use_container_width=True)
+                    # Use uuid to guarantee 100% mathematical uniqueness to prevent Streamlit duplicates
+                    loss_chart.plotly_chart(fig, use_container_width=True, key=str(uuid.uuid4()))
             
             with st.spinner(f"Fine-tuning for {ft_epochs} epoch(s)..."):
                 metrics = pl.finetune_distilbert(
@@ -940,6 +941,20 @@ with tab_compare:
 # TAB 5  ─  HOW IT WORKS
 # ─────────────────────────────────────────────────────────────────────────────
 with tab_about:
+
+    st.markdown("### 🏗️ Architecture: Streamlit vs Vercel")
+    st.markdown("""
+<div style='display:flex;gap:1rem;margin-bottom:2rem;'>
+  <div class='card card-blue' style='flex:1'>
+    <h4 style='margin-top:0'>🔵 Streamlit (This App)</h4>
+    <p style='color:#94a3b8;font-size:0.9rem;margin:0'>Built exclusively for data apps / ML demos. You write Python → UI appears automatically. Perfect for rapid AI prototyping.</p>
+  </div>
+  <div class='card' style='flex:1;background:#18181b;border:1px solid #27272a'>
+    <h4 style='margin-top:0;color:#e5e7eb'>⚫ Vercel</h4>
+    <p style='color:#94a3b8;font-size:0.9rem;margin:0'>Built for production-scale web apps. Uses frontend frameworks (Next.js, React). Offers infinite scale and custom UX for consumers.</p>
+  </div>
+</div>
+""", unsafe_allow_html=True)
 
     st.markdown("### 📖 How Each Pipeline Works")
 

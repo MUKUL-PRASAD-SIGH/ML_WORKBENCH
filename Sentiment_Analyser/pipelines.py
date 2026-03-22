@@ -59,7 +59,7 @@ def load_transformer_pipeline() -> bool:
     from transformers import pipeline
     _classifier = pipeline(
         "sentiment-analysis",
-        model="distilbert-base-uncased-finetuned-sst-2-english",
+        model="cardiffnlp/twitter-roberta-base-sentiment",
         device=-1, truncation=True, max_length=512,
     )
     _trans_ready = True
@@ -110,7 +110,7 @@ def spacy_steps(text: str) -> dict:
 def bert_steps(text: str) -> dict:
     from transformers import AutoTokenizer
     tok = AutoTokenizer.from_pretrained(
-        "distilbert-base-uncased-finetuned-sst-2-english"
+        "cardiffnlp/twitter-roberta-base-sentiment"
     )
     enc    = tok(text, return_tensors="pt", truncation=True, max_length=512)
     ids    = enc["input_ids"][0].tolist()
@@ -181,13 +181,22 @@ def predict_transformer(text: str) -> dict:
     steps  = bert_steps(text)
     result = _classifier(text)[0]
     elapsed= (time.perf_counter() - t0) * 1000
-    label  = result["label"].capitalize()
-    score  = float(result["score"])
+    raw   = result["label"]
+    score = float(result["score"])
+    
+    # Handle RoBERTa label logic (LABEL_0=neg, LABEL_1=neu, LABEL_2=pos) or standard labels
+    if "0" in raw or raw.upper() == "NEGATIVE":
+        label, p_neg, p_pos = "Negative", score, 1 - score
+    elif "2" in raw or raw.upper() == "POSITIVE":
+        label, p_neg, p_pos = "Positive", 1 - score, score
+    else: # LABEL_1 (Neutral) mapped neutrally for binary UI
+        label, p_neg, p_pos = "Negative", 0.5, 0.5
+
     return {
         "label":      label,
-        "confidence": round(score, 4),
-        "proba_neg":  round(1 - score if label == "Positive" else score, 4),
-        "proba_pos":  round(score if label == "Positive" else 1 - score, 4),
+        "confidence": round(max(p_neg, p_pos), 4),
+        "proba_neg":  round(p_neg, 4),
+        "proba_pos":  round(p_pos, 4),
         "time_ms":    round(elapsed, 2),
         "steps":      steps,
         "top_features": [],
@@ -343,16 +352,24 @@ def load_finetuned_pipeline() -> bool:
     global _finetuned_pipe, _finetuned_ready
     if _finetuned_ready:
         return True
-    if not os.path.isdir(FINETUNED_DIR):
+    
+    # Do not try loading if a previous crash left an empty folder
+    target_config = os.path.join(FINETUNED_DIR, "config.json")
+    if not os.path.isdir(FINETUNED_DIR) or not os.path.isfile(target_config):
         return False
-    from transformers import pipeline as hf_pipeline
-    _finetuned_pipe  = hf_pipeline(
-        "sentiment-analysis",
-        model=FINETUNED_DIR,
-        device=-1, truncation=True, max_length=512,
-    )
-    _finetuned_ready = True
-    return True
+        
+    try:
+        from transformers import pipeline as hf_pipeline
+        _finetuned_pipe  = hf_pipeline(
+            "sentiment-analysis",
+            model=FINETUNED_DIR,
+            device=-1, truncation=True, max_length=512,
+        )
+        _finetuned_ready = True
+        return True
+    except Exception as e:
+        print(f"Failed to load fine-tuned pipeline: {e}")
+        return False
 
 
 def predict_finetuned(text: str) -> dict:

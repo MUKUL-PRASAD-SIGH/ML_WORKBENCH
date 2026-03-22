@@ -1,0 +1,7 @@
+{
+  "name": "Sentiment Analyser",
+  "description": "Interactive NLP dashboard comparing NLTK, spaCy & RoBERTa — see every pipeline step visualised in real-time. Train models, run batch inference, and fine-tune a Transformer — all from the browser.",
+  "stack": "Python · Streamlit · HuggingFace · scikit-learn · spaCy · Plotly",
+  "demo_url": "https://sentilyticz.streamlit.app/",
+  "status": "✅ Live"
+}
