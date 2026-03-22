@@ -408,6 +408,16 @@ def finetune_distilbert(
         if progress_cb:
             progress_cb(msg, pct, extra or {})
 
+    # Auto-fix missing or outdated 'accelerate' for the current python environment
+    try:
+        import accelerate
+    except ImportError:
+        log("🚀  Auto-installing missing 'accelerate' library (one-time setup) …", 0.01)
+        import subprocess, sys
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "accelerate>=1.1.0", "transformers[torch]"])
+        import accelerate # Ensure it's available after install
+
+
     # ── cap samples for CPU sanity ─────────────────────────────────────────
     if len(texts) > max_samples:
         log(f"⚠️  Capping at {max_samples:,} samples for CPU speed …", 0.02)
@@ -476,11 +486,11 @@ def finetune_distilbert(
         num_train_epochs=epochs,
         per_device_train_batch_size=batch_size,
         per_device_eval_batch_size=batch_size,
-        evaluation_strategy="epoch",
+        eval_strategy="epoch",  # Fix for newer transformers versions
         save_strategy="epoch",
         load_best_model_at_end=True,
         logging_steps=logging_steps,
-        no_cuda=True,            # CPU — set to False if GPU available
+        use_cpu=True,            # use_cpu replaces no_cuda in newer transformers versions
         report_to="none",
         dataloader_num_workers=0,
         disable_tqdm=True,
