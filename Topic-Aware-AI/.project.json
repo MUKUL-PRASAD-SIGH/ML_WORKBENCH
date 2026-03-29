@@ -1,0 +1,7 @@
+{
+  "name": "Topic-Aware AI",
+  "description": "Educational masterclass dashboard teaching Hybrid NLP concepts — combining sklearn NMF for topic extraction and DistilBERT for deep semantic meaning. Train the brain in-browser.",
+  "stack": "Python · Streamlit · HuggingFace · scikit-learn",
+  "demo_url": "https://topicawareai.streamlit.app/",
+  "status": "✅ Live"
+}

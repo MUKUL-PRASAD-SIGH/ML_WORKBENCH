@@ -1,6 +1,8 @@
 # Topic-Aware AI Dashboard
 
-> **Advanced Hybrid NLP** — Gensim LDA + DistilBERT Transformers  
+[![Live Demo](https://img.shields.io/badge/🌐%20Live%20Demo-topicawareai.streamlit.app-818cf8?style=for-the-badge&logo=streamlit&logoColor=white)](https://topicawareai.streamlit.app/)
+
+> **Advanced Hybrid NLP** — sklearn NMF Topics + DistilBERT Transformers  
 > An educational masterclass platform that teaches complex AI concepts through an interactive live UI.
 
 ---
@@ -11,7 +13,7 @@ Builds an end-to-end hybrid AI system that captures BOTH:
 
 | Component | Tool | Output |
 |-----------|------|--------|
-| **Topic Discovery** | LDA (Gensim) | "This is 90% Sci-Fi, 10% Action" |
+| **Topic Discovery** | NMF (sklearn) | "This is 90% Sci-Fi, 10% Action" |
 | **Deep Semantic Meaning** | DistilBERT (Transformers) | 768 numbers representing context & tone |
 | **Hybrid Fusion** | L2-Norm + Concat | One super-list of 768+K numbers |
 
@@ -29,19 +31,24 @@ Topic-Aware-AI/
 ├── README.md            📖  This file
 ├── FEATURES.md          📝  Deep-dive feature documentation
 ├── data/                💾  Saved vectors (.npy) & raw text data
-└── models/              📂  Saved model files (.gensim, .pkl)
+└── models/              📂  Saved model files (.pkl)
 ```
 
 ---
 
-## 🚀 Quick Start (2 Steps)
+## 🚀 Quick Start
 
-### 1. Install Dependencies
+### 🌐 Try it live (no install needed)
+**[topicawareai.streamlit.app →](https://topicawareai.streamlit.app/)**
+
+### Or run locally:
+
+#### 1. Install Dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. Launch Dashboard
+#### 2. Launch Dashboard
 ```bash
 streamlit run app.py
 ```
@@ -92,7 +99,7 @@ streamlit run app.py
 | Role | Tool |
 |------|------|
 | Dashboard | Streamlit, Plotly |
-| Topic Modelling | Gensim, LdaModel |
+| Topic Modelling | sklearn NMF + TF-IDF |
 | Transformers | HuggingFace, DistilBERT |
 | Classifiers | Scikit-Learn |
 | Dimensionality Reduction | UMAP-learn (PCA fallback) |
@@ -103,5 +110,13 @@ streamlit run app.py
 ## 🧠 Why Hybrid?
 
 - **BERT alone** can't tell you *what* a review is about. It understands *how* it's said.
-- **LDA alone** counts keywords. It can't understand sarcasm or context ("not terrible" → positive).
-- **Together**: The AI understands both **What the text is about** (LDA) and **How it says it** (BERT). No single model can do both.
+- **NMF alone** counts keywords. It can't understand sarcasm or context ("not terrible" → positive).
+- **Together**: The AI understands both **What the text is about** (NMF topics) and **How it says it** (BERT). No single model can do both.
+
+---
+
+## 🌐 Live App
+
+> **[https://topicawareai.streamlit.app/](https://topicawareai.streamlit.app/)**
+
+Open it, click **Build Engine**, hit **⚡ Fast Dataset**, and watch the whole pipeline run live in your browser.

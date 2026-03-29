@@ -56,6 +56,7 @@ I'm not here to collect stars. I'm here to **build things that work**, learn dee
 | # | Project | Description | Stack | Live Demo | Status |
 |---|---------|-------------|-------|-----------|--------|
 | 01 | [**Sentiment Analyser**](./Sentiment_Analyser/) | Interactive NLP dashboard comparing NLTK, spaCy & RoBERTa — see every pipeline step visualised in real-time. Train models, run batch inference, and fine-tune a Transformer — all from the browser. | Python · Streamlit · HuggingFace · scikit-learn · spaCy · Plotly | [**🌐 Try it live →**](https://sentilyticz.streamlit.app/) | ✅ Live |
+| 02 | [**Topic-Aware AI**](./Topic-Aware-AI/) | Educational masterclass dashboard teaching Hybrid NLP concepts — combining sklearn NMF for topic extraction and DistilBERT for deep semantic meaning. Train the brain in-browser. | Python · Streamlit · HuggingFace · scikit-learn | [**🌐 Try it live →**](https://topicawareai.streamlit.app/) | ✅ Live |
 <!-- PROJECTS_END -->
 
 ---
@@ -123,19 +124,62 @@ Plotly       → Visualisations
 
 ---
 
-## 🛣️ What's Coming Next
+## 🚀 Project #02 — Topic-Aware AI (Hybrid NLP Masterclass)
 
-This workbench is **actively growing**. Here's the vibe of what's in the queue:
+<table>
+<tr>
+<td width="60%">
+
+### What it does
+
+An **educational masterclass dashboard** that teaches complex AI concepts through an interactive live UI. It demonstrates how to combine High-Level Topics with Deep Contextual Meaning to create a powerful hybrid semantic search engine.
+
+**Not just a black box.** You can watch the pipeline train live in the browser, see step-by-step mathematical explanations of how text is translated into vectors, and interact visually with the embeddings using UMAP.
+
+### The models inside
+
+| Model | Approach | Output |
+|-------|----------|----------|
+| 🔵 **NMF (sklearn)** | Topic Extraction | Probability percentages (e.g. 90% Sci-Fi) |
+| 🔴 **DistilBERT** | Pre-trained Transformer | 768-dim semantic vector |
+| 🟣 **Hybrid Engine** | L2-Norm + Concat | Combined unified feature space |
+
+### Key features
+
+- ⚡ Build and train the system live in your browser using IMDB, Fast, or Custom datasets
+- 🔬 **Step-by-Step Explainer**: Watch sentences translate into numbers with real-time math explanations
+- 🎯 **Classify & Search**: Train Logistic Regression / SVM / MLP and search by meaning
+- 📊 **Visualise Space**: Interactive 2D UMAP scatter plots and topic word clouds
+- 💎 **Premium Design**: Built using the "Obsidian Masterclass" design system
+
+</td>
+<td width="40%" align="center">
+
+### 🌐 Live Demo
+
+**[topicawareai.streamlit.app](https://topicawareai.streamlit.app/)**
 
 ```
-🔲  Image Classification Dashboard  (CNN vs ViT, step-by-step feature maps)
-🔲  Generative Text Explorer         (GPT-2 internals, beam search visualised)
-🔲  Tabular ML Explainer             (XGBoost vs Neural Net, SHAP overlays)
-🔲  Recommendation Engine            (Collab filtering explained interactively)
-🔲  Reinforcement Learning Sandbox   (Watch an agent learn in real-time)
+Try it yourself →
+Click 'Build Engine'.
+Train the AI live.
+Understand the math
+behind modern NLP.
 ```
 
-Each one will be **deployed and documented** — same format, same philosophy.
+**Built with:**
+```
+Streamlit    → UI
+HuggingFace  → Transformers
+scikit-learn → Classical ML & NMF
+Plotly/UMAP  → Visualisations
+```
+
+[📖 Full docs](./Topic-Aware-AI/README.md)
+
+</td>
+</tr>
+</table>
 
 ---
 
